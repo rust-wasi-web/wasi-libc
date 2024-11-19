@@ -305,17 +305,30 @@ static int start_c11(void *p)
 void wasi_thread_start(int tid, void *p);
 hidden void *__dummy_reference = wasi_thread_start;
 
-hidden void __wasi_thread_start_C(int tid, void *p)
+hidden int __wasi_thread_start_C(int tid, void *p)
 {
 	struct start_args *args = p;
 	pthread_t self = __pthread_self();
+
 	// Set the thread ID (TID) on the pthread structure. The TID is stored
 	// atomically since it is also stored by the parent thread; this way,
 	// whichever thread (parent or child) reaches this point first can proceed
 	// without waiting.
 	atomic_store((atomic_int *) &(self->tid), tid);
-	// Execute the user's start function.
-	__pthread_exit(args->start_func(args->start_arg));
+
+	if (__wasi_thread_actions() & __WASI_THREAD_ACTIONS_START) {
+		// Execute the user's start function.
+		self->result = args->start_func(args->start_arg);
+	}
+
+	if (__wasi_thread_actions() & __WASI_THREAD_ACTIONS_FINISH) {
+		// Exit the thread.
+		__pthread_exit(self->result);
+		return 0;
+	} else {
+		// Keep the thread.
+		return 1;
+	}
 }
 #endif
 

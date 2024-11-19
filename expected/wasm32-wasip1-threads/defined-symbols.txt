@@ -354,6 +354,7 @@ __wasi_sock_accept
 __wasi_sock_recv
 __wasi_sock_send
 __wasi_sock_shutdown
+__wasi_thread_actions
 __wasi_thread_spawn
 __wasi_thread_start_C
 __wasilibc_access
