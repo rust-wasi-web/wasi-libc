@@ -305,6 +305,8 @@ static int start_c11(void *p)
 void wasi_thread_start(int tid, void *p);
 hidden void *__dummy_reference = wasi_thread_start;
 
+static _Thread_local int wasi_thread_actions = 0;
+
 hidden int __wasi_thread_start_C(int tid, void *p)
 {
 	struct start_args *args = p;
@@ -316,12 +318,12 @@ hidden int __wasi_thread_start_C(int tid, void *p)
 	// without waiting.
 	atomic_store((atomic_int *) &(self->tid), tid);
 
-	if (__wasi_thread_actions() & __WASI_THREAD_ACTIONS_START) {
+	if (!(wasi_thread_actions & __WASI_THREAD_ACTIONS_NO_START)) {
 		// Execute the user's start function.
 		self->result = args->start_func(args->start_arg);
 	}
 
-	if (__wasi_thread_actions() & __WASI_THREAD_ACTIONS_FINISH) {
+	if (!(wasi_thread_actions & __WASI_THREAD_ACTIONS_NO_FINISH)) {
 		// Exit the thread.
 		__pthread_exit(self->result);
 		return 0;
@@ -330,6 +332,12 @@ hidden int __wasi_thread_start_C(int tid, void *p)
 		return 1;
 	}
 }
+
+__attribute__((export_name("wasi_thread_set_actions")))
+void wasi_thread_set_actions(int actions) {
+	wasi_thread_actions = actions;
+}
+
 #endif
 
 #ifdef __wasilibc_unmodified_upstream
