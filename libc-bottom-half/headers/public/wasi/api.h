@@ -2107,15 +2107,10 @@ int32_t __wasi_thread_spawn(
     void *start_arg
 )  __attribute__((__warn_unused_result__));
 
-/**
- * Gets the thread execution actions.
- */
-int32_t __wasi_thread_actions() __attribute__((__warn_unused_result__));
-
-/** Initialize the thread and run its code. */
-#define __WASI_THREAD_ACTIONS_START (1 << 0)
-/** Run the thread cleanup code including TLS destructors. */
-#define __WASI_THREAD_ACTIONS_FINISH (1 << 1)
+/** Do not initialize the thread and run its code. */
+#define __WASI_THREAD_ACTIONS_NO_START (1 << 0)
+/** Do not run the thread cleanup code including TLS destructors. */
+#define __WASI_THREAD_ACTIONS_NO_FINISH (1 << 1)
 
 #endif
 

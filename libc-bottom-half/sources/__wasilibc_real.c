@@ -673,8 +673,4 @@ int32_t __imported_wasi_thread_actions() __attribute__((
     __import_module__("wasi"),
     __import_name__("thread-actions")
 ));
-
-int32_t __wasi_thread_actions() {
-    return __imported_wasi_thread_actions();
-}
 #endif
