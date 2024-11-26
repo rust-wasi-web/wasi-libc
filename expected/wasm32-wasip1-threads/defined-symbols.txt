@@ -1314,6 +1314,7 @@ vswprintf
 vswscanf
 vwprintf
 vwscanf
+wasi_nprocessors
 wasi_thread_set_actions
 wasi_thread_start
 wcpcpy

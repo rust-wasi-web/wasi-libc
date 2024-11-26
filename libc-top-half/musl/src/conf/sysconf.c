@@ -32,6 +32,16 @@
 
 #define RLIM(x) (-32768|(RLIMIT_ ## x))
 
+static int wasi_nprocessors() {
+	int n;
+	__asm__(
+		".globaltype wasi_nprocessors, i32\n"
+		"global.get wasi_nprocessors\n"
+		"local.set %0\n"
+		: "=r"(n));
+	return n;
+}
+
 long sysconf(int name)
 {
 	static const short values[] = {
@@ -259,8 +269,7 @@ long sysconf(int name)
 			for (; set[i]; set[i]&=set[i]-1, cnt++);
 		return cnt;
 #else
-		// WASI has no way to query the processor count
-		return 1;
+		return wasi_nprocessors();
 #endif
 #ifdef __wasilibc_unmodified_upstream // WASI has no sysinfo
 	case JT_PHYS_PAGES & 255:

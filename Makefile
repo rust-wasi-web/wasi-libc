@@ -372,6 +372,7 @@ LIBC_TOP_HALF_MUSL_SOURCES += \
         thread/sem_trywait.c \
         thread/sem_wait.c \
         thread/wasm32/wasi_thread_start.s \
+        thread/wasm32/wasi_nprocessors.s \
     )
 endif
 ifeq ($(THREAD_MODEL), single)
